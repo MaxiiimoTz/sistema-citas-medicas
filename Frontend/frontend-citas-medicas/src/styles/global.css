@@ -1,0 +1,41 @@
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f6f7fb;
+    color: #111;
+}
+
+a { color: inherit; }
+
+input, button {
+    font: inherit;
+}
+
+input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #d7dbe7;
+    border-radius: 10px;
+    outline: none;
+    background: white;
+}
+
+input:focus {
+    border-color: #9aa6ff;
+}
+
+button {
+    padding: 10px 12px;
+    border: 0;
+    border-radius: 10px;
+    background: #111;
+    color: white;
+    cursor: pointer;
+}
+
+button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
