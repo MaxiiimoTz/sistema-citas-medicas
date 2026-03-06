@@ -1,0 +1,90 @@
+package com.idat.serviceImpl;
+
+import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import com.idat.model.Usuario;
+import com.idat.repository.UsuarioRepository;
+import com.idat.service.UsuarioService;
+
+@Service
+public class UsuarioServiceImpl implements UsuarioService {
+
+    @Autowired
+    private UsuarioRepository repository;
+
+    @Override
+    public List<Usuario> listar() {
+        return repository.findAll();
+    }
+
+    @Override
+    public Usuario obtenerPorId(Integer id) {
+        return repository.findById(id).orElse(null);
+    }
+
+    @Override
+    public Usuario guardar(Usuario usuario) {
+
+        if (repository.findByEmail(usuario.getEmail()) != null) {
+            throw new RuntimeException("EMAIL_DUPLICADO");
+        }
+
+        if (usuario.getPassword() == null || usuario.getPassword().isEmpty()) {
+            String email = usuario.getEmail();
+            String base = email.substring(0, email.indexOf("@"));
+            usuario.setPassword(base + "123");
+            
+            usuario.setPasswordTemporal(true);
+        }
+
+        return repository.save(usuario);
+    }
+    
+    @Override
+    public Usuario cambiarEstado(Integer id, Boolean estado) {
+        Usuario usuario = repository.findById(id).orElse(null);
+        if (usuario == null) return null;
+
+        usuario.setEstado(estado);
+        return repository.save(usuario);
+    }
+    
+    @Override
+    public Usuario cambiarPassword(Integer idUsuario, String nuevaPassword) {
+    	Usuario usuario = repository.findById(idUsuario).orElse(null);
+    	
+    	if(usuario == null) {
+    		throw new RuntimeException("USUARIO_NO_EXISTE");
+    	}
+    	
+    	usuario.setPassword(nuevaPassword);
+    	usuario.setPasswordTemporal(false);
+    	
+    	return repository.save(usuario);
+    }
+
+    @Override
+    public Usuario actualizar(Integer id, Usuario usuario) {
+
+        Usuario existente = repository.findById(id).orElse(null);
+
+        if (existente == null) {
+            throw new RuntimeException("USUARIO_NO_EXISTE");
+        }
+
+        Usuario conMismoEmail = repository.findByEmail(usuario.getEmail());
+
+        if (conMismoEmail != null && !conMismoEmail.getIdUsuario().equals(id)) {
+            throw new RuntimeException("EMAIL_DUPLICADO");
+        }
+
+        usuario.setIdUsuario(id);
+        return repository.save(usuario);
+    }
+
+    @Override
+    public void eliminar(Integer id) {
+        repository.deleteById(id);
+    }
+}
