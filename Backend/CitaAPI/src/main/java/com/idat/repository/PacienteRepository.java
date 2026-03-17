@@ -24,4 +24,7 @@ public interface PacienteRepository extends JpaRepository<Paciente, Integer> {
 	        @Param("inicio") LocalDateTime inicio,
 	        @Param("fin") LocalDateTime fin
 	    );
+	    
+	    
+	Paciente findByUsuarioIdUsuario(Integer idUsuario);
 }

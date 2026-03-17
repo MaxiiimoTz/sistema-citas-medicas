@@ -22,9 +22,14 @@ public class Medico {
     @ManyToOne
     @JoinColumn(name = "idEspecialidad")
     private Especialidad especialidad;
+    
+    @ManyToOne
+    @JoinColumn(name = "idConsultorio")
+    private Consultorio consultorio;
 
-    private Boolean estado = true;
+	private Boolean estado = true;
 
+	
 	public Integer getIdMedico() {
 		return idMedico;
 	}
@@ -55,6 +60,14 @@ public class Medico {
 
 	public void setEspecialidad(Especialidad especialidad) {
 		this.especialidad = especialidad;
+	}
+	
+	public Consultorio getConsultorio() {
+		return consultorio;
+	}
+
+	public void setConsultorio(Consultorio consultorio) {
+		this.consultorio = consultorio;
 	}
 
 	public Boolean getEstado() {

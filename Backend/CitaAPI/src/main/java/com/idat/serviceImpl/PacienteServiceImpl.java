@@ -33,6 +33,11 @@ public class PacienteServiceImpl implements PacienteService {
     }
     
     @Override
+    public Paciente obtenerPorUsuario(Integer idUsuario) {
+        return repository.findByUsuarioIdUsuario(idUsuario);
+    }
+    
+    @Override
     public List<Map<String, Object>> reportePacientesPeriodo(
             LocalDateTime inicio,
             LocalDateTime fin) {

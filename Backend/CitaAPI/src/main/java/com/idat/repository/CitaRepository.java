@@ -1,6 +1,7 @@
 package com.idat.repository;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -66,4 +67,27 @@ public interface CitaRepository extends JpaRepository<Cita, Integer> {
 		    ORDER BY c.fecha, c.hora
 		""")
 		List<Cita> obtenerCitasPorPaciente(@Param("idUsuario") Integer idUsuario);
+		
+		
+	// Obtener citas por médico	
+		@Query("""
+			    SELECT c
+			    FROM Cita c
+			    WHERE c.medico.usuario.idUsuario = :idUsuario
+			    ORDER BY c.fecha, c.hora
+			""")
+			List<Cita> obtenerCitasPorMedico(@Param("idUsuario") Integer idUsuario);
+		
+	// Evitar citas duplicadas
+		@Query("""
+			    SELECT c FROM Cita c
+			    WHERE c.medico.idMedico = :idMedico
+			    AND c.fecha = :fecha
+			    AND c.hora = :hora
+			""")
+			List<Cita> existeCita(
+			    @Param("idMedico") Integer idMedico,
+			    @Param("fecha") LocalDate fecha,
+			    @Param("hora") LocalTime hora
+			);
 }

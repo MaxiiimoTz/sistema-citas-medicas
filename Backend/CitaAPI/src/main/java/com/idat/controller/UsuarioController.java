@@ -9,7 +9,6 @@ import java.util.Map;
 import com.idat.model.Usuario;
 import com.idat.service.UsuarioService;
 
-@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/api/usuarios")
 public class UsuarioController {

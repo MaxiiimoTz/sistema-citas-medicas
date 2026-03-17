@@ -12,6 +12,7 @@ public interface PacienteService {
     long contarPaciente();
     List<Map<String, Object>> reportePacientesPeriodo( LocalDateTime inicio, LocalDateTime fin);
     Paciente obtenerPorId(Integer id);
+    Paciente obtenerPorUsuario(Integer idUsuario);
     Paciente guardar(Paciente paciente);
     Paciente actualizar(Integer id, Paciente paciente);
     void eliminar(Integer id);

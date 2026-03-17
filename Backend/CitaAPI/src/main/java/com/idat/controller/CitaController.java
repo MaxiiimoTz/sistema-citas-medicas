@@ -11,7 +11,6 @@ import java.util.Map;
 import com.idat.model.Cita;
 import com.idat.service.CitaService;
 
-@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/api/citas")
 public class CitaController {
@@ -34,6 +33,14 @@ public class CitaController {
     	return service.contarPendientes();
     }
     
+    @GetMapping("/disponibles")
+    public List<Map<String, Object>> disponibles(
+        @RequestParam Integer idMedico,
+        @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha
+    ){
+        return service.obtenerHorariosDisponibles(idMedico, fecha);
+    }
+    
     @GetMapping("/semana")
     public List<Map<String, Object>> citasSemana(){
     	return service.citasSemana();
@@ -42,6 +49,11 @@ public class CitaController {
     @GetMapping("/estado")
     public List<Map<String, Object>> estadoCitas(){
     	return service.contarPorEstado();
+    }
+    
+    @GetMapping("/medico/{id}")
+    public List<Cita> citasMedico(@PathVariable Integer id) {
+        return service.obtenerPorMedico(id);
     }
     
     @GetMapping("/reporte/periodo")

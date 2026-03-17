@@ -7,7 +7,6 @@ import java.util.List;
 import com.idat.model.Medico;
 import com.idat.service.MedicoService;
 
-@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/api/medicos")
 public class MedicoController {
@@ -18,6 +17,11 @@ public class MedicoController {
     @GetMapping
     public List<Medico> listar() {
         return service.listar();
+    }
+    
+    @GetMapping("/especialidad/{id}")
+    public List<Medico> porEspecialidad(@PathVariable Integer id){
+        return service.obtenerPorEspecialidad(id);
     }
     
     @GetMapping("/activos/count")

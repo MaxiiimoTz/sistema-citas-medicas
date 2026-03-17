@@ -10,7 +10,6 @@ import java.util.Map;
 import com.idat.model.Paciente;
 import com.idat.service.PacienteService;
 
-@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/api/pacientes")
 public class PacienteController {
@@ -44,8 +43,11 @@ public class PacienteController {
         return service.obtenerPorId(id);
     }
     
+    @GetMapping("/usuario/{idUsuario}")
+    public Paciente obtenerPorUsuario(@PathVariable Integer idUsuario) {
+        return service.obtenerPorUsuario(idUsuario);
+    }
     
-
     @PostMapping
     public Paciente guardar(@RequestBody Paciente paciente) {
         return service.guardar(paciente);

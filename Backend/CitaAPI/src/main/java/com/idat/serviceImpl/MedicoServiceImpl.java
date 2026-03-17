@@ -19,6 +19,11 @@ public class MedicoServiceImpl implements MedicoService {
     public List<Medico> listar() {
         return repository.findAll();
     }
+    
+    @Override
+    public List<Medico> obtenerPorEspecialidad(Integer idEspecialidad) {
+        return repository.findByEspecialidadIdEspecialidad(idEspecialidad);
+    }
 
     @Override
     public Medico guardar(Medico medico) {

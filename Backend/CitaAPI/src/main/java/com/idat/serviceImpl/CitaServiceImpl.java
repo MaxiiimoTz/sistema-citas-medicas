@@ -2,6 +2,7 @@ package com.idat.serviceImpl;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -12,7 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.idat.model.Cita;
+import com.idat.model.HorarioMedico;
 import com.idat.repository.CitaRepository;
+import com.idat.repository.HorarioMedicoRepository;
 import com.idat.service.CitaService;
 
 @Service
@@ -20,6 +23,10 @@ public class CitaServiceImpl implements CitaService {
 
     @Autowired
     private CitaRepository repository;
+    
+    @Autowired
+    private HorarioMedicoRepository horarioRepository;
+
 
     @Override
     public List<Cita> listar() {
@@ -121,6 +128,59 @@ public class CitaServiceImpl implements CitaService {
     	});
     	
     	return resultado;
+    }
+    
+    @Override
+    public List<Map<String, Object>> obtenerHorariosDisponibles(Integer idMedico, LocalDate fecha){
+
+        String dia = switch(fecha.getDayOfWeek()){
+            case MONDAY -> "Lunes";
+            case TUESDAY -> "Martes";
+            case WEDNESDAY -> "Miércoles";
+            case THURSDAY -> "Jueves";
+            case FRIDAY -> "Viernes";
+            case SATURDAY -> "Sábado";
+            default -> "Domingo";
+        };
+
+        HorarioMedico horario = horarioRepository
+            .findByMedicoIdMedicoAndDiaSemana(idMedico, dia);
+
+        if(horario == null) return List.of();
+
+        List<Map<String,Object>> resultado = new ArrayList<>();
+
+        LocalTime actual = horario.getHoraInicio();
+
+        while(actual.isBefore(horario.getHoraFin())){
+
+            String horaStr = actual.toString().substring(0,5);
+
+            boolean ocupado = repository.obtenerCitasPorMedico(idMedico)
+                .stream()
+                .anyMatch(c ->
+                    c.getFecha().equals(fecha) &&
+                    c.getHora().toString().substring(0,5).equals(horaStr)
+                );
+
+            if(!ocupado){
+
+                Map<String,Object> item = new HashMap<>();
+                item.put("hora", horaStr);
+                item.put("consultorio", horario.getConsultorio().getNumero());
+
+                resultado.add(item);
+            }
+
+            actual = actual.plusMinutes(horario.getDuracionMinutos());
+        }
+
+        return resultado;
+    }
+    
+    @Override
+    public List<Cita> obtenerPorMedico(Integer idMedico) {
+        return repository.obtenerCitasPorMedico(idMedico);
     }
     
     @Override
