@@ -12,5 +12,21 @@ export const contarMedicosActivos = async () => {
     });
 
     return response.data;
+};
 
-}
+export const obtenerMedicos = async () => {
+    const token = localStorage.getItem("token");
+
+    const response = await axios.get(API_URL, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+
+    return response.data;
+};
+
+export const obtenerMedicosPorEspecialidad = async (idEspecialidad) => {
+    const res = await axios.get(`${API_URL}/especialidad/${idEspecialidad}`);
+    return res.data;
+};

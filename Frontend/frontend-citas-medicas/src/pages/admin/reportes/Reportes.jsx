@@ -2,13 +2,19 @@ import ReportCard from "../../../components/ReportCard";
 import ReporteCitasPeriodo from "./ReporteCitasPeriodo";
 import ReporteCitasMedico from "./ReporteCitasMedico";
 import ReportePacientesPeriodo from "./ReportePacientesPeriodo";
+import { theme } from "../../../styles/theme";
 
 export default function Reportes() {
     return (
-        <>
-            <h1 style={{ marginBottom: 24 }}>Reportes</h1>
+        <div style={{ padding: 10 }}>
 
-            {/* REPORTE PRINCIPAL */}
+            <h1 style={{
+                marginBottom: 24,
+                color: theme.colors.text
+            }}>
+                Reportes
+            </h1>
+
             <ReportCard
                 icon="📊"
                 title="Citas por período"
@@ -17,7 +23,6 @@ export default function Reportes() {
                 <ReporteCitasPeriodo />
             </ReportCard>
 
-            {/* GRID DE 2 COLUMNAS */}
             <div
                 style={{
                     display: "grid",
@@ -41,6 +46,7 @@ export default function Reportes() {
                     <ReportePacientesPeriodo />
                 </ReportCard>
             </div>
-        </>
+
+        </div>
     );
 }

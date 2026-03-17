@@ -1,30 +1,37 @@
-export default function Card({ titulo, valor, subtitulo, color }) {
+import { theme } from "../../styles/theme";
+
+export default function Card({ titulo, valor, subtitulo, variant="primary" }) {
+
+    const colors = {
+        primary: theme.colors.primary,
+        success: theme.colors.success,
+        warning: theme.colors.warning,
+        danger: theme.colors.danger
+    };
+
     return (
-        <div
-            style={{
-                background: "#fff",
-                borderRadius: 18,
-                padding: 20,
-                borderLeft: `6px solid ${color}`,
-                boxShadow: "0 4px 14px rgba(0,0,0,0.06)",
-                transition: "0.2s"
-            }}
-        >
-            <div style={{ fontSize: 14, color: "#666" }}>
+        <div style={{
+            background: theme.colors.white,
+            borderRadius: theme.radius.md,
+            padding:20,
+            border:`1px solid ${theme.colors.border}`,
+            boxShadow: theme.shadow.card
+        }}>
+            <div style={{ color: theme.colors.subtext }}>
                 {titulo}
             </div>
 
-            <div style={{ 
-                fontSize: 32, 
-                fontWeight: 900, 
-                marginTop: 6,
-                color: color
+            <div style={{
+                fontSize:28,
+                fontWeight:800,
+                color: colors[variant],
+                marginTop:6
             }}>
                 {valor}
             </div>
 
             {subtitulo && (
-                <div style={{ fontSize: 12, color: "#888", marginTop: 6 }}>
+                <div style={{ fontSize:12, color: theme.colors.subtext }}>
                     {subtitulo}
                 </div>
             )}

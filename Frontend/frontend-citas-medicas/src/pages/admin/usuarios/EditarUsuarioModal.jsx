@@ -1,4 +1,6 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 import { useEffect, useState } from "react";
+import { theme } from "../../../styles/theme";
 
 export default function EditarUsuarioModal({
     usuario,
@@ -7,10 +9,8 @@ export default function EditarUsuarioModal({
 }) {
     const [form, setForm] = useState(null);
 
-    // Inicializa el formulario cuando se abre el modal
     useEffect(() => {
         if (usuario) {
-            // eslint-disable-next-line react-hooks/set-state-in-effect
             setForm(usuario);
         }
     }, [usuario]);
@@ -83,7 +83,6 @@ export default function EditarUsuarioModal({
     );
 }
 
-/* SUB COMPONENTE INPUT */
 function Campo({ label, value, onChange }) {
     return (
         <div style={campo}>
@@ -102,7 +101,8 @@ function Campo({ label, value, onChange }) {
 const overlay = {
     position: "fixed",
     inset: 0,
-    background: "rgba(0,0,0,0.45)",
+    background: "rgba(0,0,0,0.5)",
+    backdropFilter: "blur(4px)",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
@@ -110,17 +110,18 @@ const overlay = {
 };
 
 const modal = {
-    width: 440,
+    width: 460,
     background: "#fff",
-    borderRadius: 16,
-    boxShadow: "0 20px 40px rgba(0,0,0,0.2)",
+    borderRadius: 18,
+    boxShadow: "0 25px 50px rgba(0,0,0,0.25)",
     overflow: "hidden"
 };
 
 const header = {
     padding: "16px 20px",
-    borderBottom: "1px solid #e5e7eb",
-    background: "#f9fafb"
+    borderBottom: `1px solid ${theme.colors.border}`,
+    background: "linear-gradient(135deg,#1E6FB9,#1FB5A9)",
+    color: "#fff"
 };
 
 const body = {
@@ -138,21 +139,22 @@ const campo = {
 
 const labelStyle = {
     fontSize: 13,
-    fontWeight: 500,
-    color: "#374151"
+    fontWeight: 600,
+    color: theme.colors.text
 };
 
 const input = {
     padding: "10px 12px",
-    borderRadius: 8,
-    border: "1px solid #d1d5db",
-    fontSize: 14
+    borderRadius: 10,
+    border: `1px solid ${theme.colors.border}`,
+    fontSize: 14,
+    outline: "none"
 };
 
 const select = {
     padding: "10px 12px",
-    borderRadius: 8,
-    border: "1px solid #d1d5db",
+    borderRadius: 10,
+    border: `1px solid ${theme.colors.border}`,
     fontSize: 14,
     background: "#fff"
 };
@@ -162,7 +164,7 @@ const acciones = {
     display: "flex",
     justifyContent: "flex-end",
     gap: 10,
-    borderTop: "1px solid #e5e7eb",
+    borderTop: `1px solid ${theme.colors.border}`,
     background: "#f9fafb"
 };
 
@@ -170,15 +172,16 @@ const btnCancelar = {
     background: "#e5e7eb",
     border: "none",
     padding: "8px 14px",
-    borderRadius: 8,
+    borderRadius: 10,
     cursor: "pointer"
 };
 
 const btnGuardar = {
-    background: "#4f46e5",
+    background: theme.colors.primary,
     color: "#fff",
     border: "none",
     padding: "8px 16px",
-    borderRadius: 8,
-    cursor: "pointer"
+    borderRadius: 10,
+    cursor: "pointer",
+    fontWeight: 600
 };

@@ -1,285 +1,66 @@
 import { useEffect, useState } from "react";
 import { obtenerCitasPaciente } from "../../services/citas.api";
+import Card from "../../components/ui/Card";
+import Grid from "../../components/ui/Grid";
+import { theme } from "../../styles/theme";
 
-export default function DashboardPaciente() {
+export default function DashboardPaciente(){
 
-    const [citas, setCitas] = useState([]);
-    const [loading, setLoading] = useState(true);
-
+    const [citas,setCitas] = useState([]);
     const usuario = JSON.parse(localStorage.getItem("usuario")) || {};
 
-    useEffect(() => {
-        cargarCitas();
-    }, []);
+    useEffect(()=>{
+        obtenerCitasPaciente(usuario.idUsuario).then(setCitas);
+    },[]);
 
-    const cargarCitas = async () => {
-        try {
-            const data = await obtenerCitasPaciente(usuario.idUsuario);
-            setCitas(data);
-        } catch (error) {
-            console.error("Error cargando citas:", error);
-        } finally {
-            setLoading(false);
-        }
-    };
+    const pendientes = citas.filter(c=>c.estado==="Pendiente");
+    const completadas = citas.filter(c=>c.estado==="Atendida");
+    const canceladas = citas.filter(c=>c.estado==="Cancelada");
 
-    if (loading) {
-        return <p style={{ padding: 20 }}>Cargando información...</p>;
-    }
+    const proxima = pendientes.length > 0 ? pendientes[0] : null;
 
-    const pendientes = citas.filter(c => c.estado === "Pendiente").length;
-    const completadas = citas.filter(c => c.estado === "Atendida").length;
-    const canceladas = citas.filter(c => c.estado === "Cancelada").length;
+    return(
+        <div style={{padding:20}}>
 
-    const citasOrdenadas = [...citas].sort((a, b) => {
-        const fechaA = new Date(`${a.fecha}T${a.hora}`);
-        const fechaB = new Date(`${b.fecha}T${b.hora}`);
-        return fechaA - fechaB;
-    });
+            {/* HEADER */}
+            <div style={{marginBottom:20}}>
+                <h2 style={{margin:0}}>
+                    Hola, {usuario.nombres} 👋
+                </h2>
+                <p style={{color:theme.colors.subtext}}>
+                    Bienvenido a tu panel de salud
+                </p>
+            </div>
 
-    const proxima = citasOrdenadas[0];
+            {/* PROXIMA CITA */}
+            <div style={{
+                background:`linear-gradient(135deg,${theme.colors.primary},${theme.colors.secondary})`,
+                color:"#fff",
+                padding:20,
+                borderRadius:16,
+                marginBottom:20
+            }}>
+                <h3 style={{margin:0}}>Próxima cita</h3>
 
-    const formatearFecha = (fecha) => {
-        return new Date(fecha).toLocaleDateString("es-PE", {
-            day: "2-digit",
-            month: "2-digit",
-            year: "numeric"
-        });
-    };
-
-    const formatearHora = (hora) => hora?.substring(0,5);
-
-    return (
-        <div style={{ padding: 24, width: "95%", margin: "0 auto" }}>
-
-                {/* HEADER */}
-
-                <div style={{ marginBottom: 25 }}>
-                    <h2 style={{ margin: 0 }}>
-                        Bienvenido, {usuario?.nombres}
-                    </h2>
-
-                    <p style={{ color: "#6b7280" }}>
-                        Aquí puedes ver el resumen de tus citas médicas
+                {proxima ? (
+                    <p style={{marginTop:10}}>
+                        {proxima.fecha} - {proxima.hora?.substring(0,5)} <br/>
+                        Dr. {proxima.medico?.usuario?.nombres}
                     </p>
-                </div>
-
-
-                {/* PROXIMA CITA */}
-
-                <div style={{
-                    background: "linear-gradient(135deg,#2563eb,#4f46e5)",
-                    borderRadius: 14,
-                    padding: 18,
-                    color: "white",
-                    marginBottom: 25
-                }}>
-
-                    <h3 style={{ margin: 0, opacity: .9 }}>
-                        📅 Próxima cita
-                    </h3>
-
-                    {proxima ? (
-                        <>
-                            <h1 style={{
-                                margin: "4px 0",
-                                fontSize: 28,
-                                fontWeight: 700
-                            }}>
-                                {formatearFecha(proxima.fecha)}
-                            </h1>
-
-                            <p style={{ margin: 0, fontSize: 16 }}>
-                                {formatearHora(proxima.hora)} con Dr. {proxima.medico?.usuario?.nombres}
-                            </p>
-                        </>
-                    ) : (
-                        <p>No tienes citas programadas</p>
-                    )}
-
-                </div>
-
-
-                {/* ESTADISTICAS */}
-
-                <div style={{
-                    display: "grid",
-                    gridTemplateColumns: "repeat(3,1fr)",
-                    gap: 18,
-                    marginBottom: 25
-                }}>
-
-                    <Card
-                        titulo="Citas pendientes"
-                        valor={pendientes}
-                        icono="⏳"
-                        color="#f59e0b"
-                    />
-
-                    <Card
-                        titulo="Citas completadas"
-                        valor={completadas}
-                        icono="✅"
-                        color="#10b981"
-                    />
-
-                    <Card
-                        titulo="Citas canceladas"
-                        valor={canceladas}
-                        icono="❌"
-                        color="#ef4444"
-                    />
-
-                </div>
-
-
-                {/* TABLA CITAS */}
-
-                <div style={{
-                    background: "#fff",
-                    borderRadius: 14,
-                    border: "1px solid #e6e8f2",
-                    padding: 20,
-                    marginBottom: 25
-                }}>
-
-                    <h3 style={{ marginTop: 0 }}>
-                        Próximas citas
-                    </h3>
-
-                    <table style={{
-                        width: "100%",
-                        borderCollapse: "collapse",
-                        marginTop: 10
-                    }}>
-
-                        <thead>
-
-                            <tr style={{
-                                textAlign: "left",
-                                color: "#6b7280",
-                                fontSize: 14
-                            }}>
-                                <th>Fecha</th>
-                                <th>Hora</th>
-                                <th>Médico</th>
-                                <th>Estado</th>
-                            </tr>
-
-                        </thead>
-
-                        <tbody>
-
-                            {citasOrdenadas.map((cita) => (
-
-                                <tr
-                                    key={cita.idCita}
-                                    style={{
-                                        borderTop: "1px solid #eee",
-                                        height: 48
-                                    }}
-                                >
-
-                                    <td>
-                                        {formatearFecha(cita.fecha)}
-                                    </td>
-
-                                    <td>
-                                        {formatearHora(cita.hora)}
-                                    </td>
-
-                                    <td>
-                                        Dr. {cita.medico?.usuario?.nombres}
-                                    </td>
-
-                                    <td style={{
-                                        fontWeight: 600,
-                                        color:
-                                            cita.estado === "Pendiente"
-                                                ? "#f59e0b"
-                                                : cita.estado === "Atendida"
-                                                ? "#10b981"
-                                                : "#ef4444"
-                                    }}>
-                                        {cita.estado}
-                                    </td>
-
-                                </tr>
-
-                            ))}
-
-                        </tbody>
-
-                    </table>
-
-                </div>
-
-
-                {/* RECOMENDACIONES */}
-
-                <div style={{
-                    background: "#fff",
-                    borderRadius: 14,
-                    border: "1px solid #e6e8f2",
-                    padding: 20
-                }}>
-
-                    <h3 style={{ marginTop: 0 }}>
-                        💡 Recomendaciones
-                    </h3>
-
-                    <ul style={{
-                        paddingLeft: 18,
-                        lineHeight: 1.8
-                    }}>
-                        <li>Confirma tus citas con 24 horas de anticipación</li>
-                        <li>Llega 10 minutos antes de tu consulta</li>
-                        <li>Revisa tu historial médico antes de asistir</li>
-                    </ul>
-
-                </div>
-
-
-        </div>
-    );
-}
-
-
-/* CARD */
-
-function Card({ titulo, valor, icono, color }) {
-
-    return (
-
-        <div style={{
-            background: "#fff",
-            borderRadius: 14,
-            padding: 18,
-            border: "1px solid #e6e8f2",
-            boxShadow: "0 4px 10px rgba(0,0,0,0.05)",
-            transition: "0.2s"
-        }}
-        onMouseEnter={(e)=>e.currentTarget.style.transform="translateY(-3px)"}
-        onMouseLeave={(e)=>e.currentTarget.style.transform="translateY(0)"}
-        >
-
-            <div style={{
-                fontSize: 14,
-                color: "#6b7280",
-                marginBottom: 6
-            }}>
-                {icono} {titulo}
+                ) : (
+                    <p style={{marginTop:10}}>
+                        No tienes citas pendientes
+                    </p>
+                )}
             </div>
 
-            <div style={{
-                fontSize: 28,
-                fontWeight: 700,
-                color: color
-            }}>
-                {valor}
-            </div>
+            {/* RESUMEN */}
+            <Grid>
+                <Card titulo="Pendientes" valor={pendientes.length} variant="warning"/>
+                <Card titulo="Completadas" valor={completadas.length} variant="success"/>
+                <Card titulo="Canceladas" valor={canceladas.length} variant="danger"/>
+            </Grid>
 
         </div>
-
     );
 }

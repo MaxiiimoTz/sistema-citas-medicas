@@ -85,3 +85,29 @@ export const obtenerCitasPaciente = async (idPaciente) => {
 
     return response.data;
 };
+
+export const obtenerCitasMedico = async (idMedico) => {
+    const token = localStorage.getItem("token");
+
+    const response = await axios.get(`${API_URL}/medico/${idMedico}`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+
+    return response.data;
+};
+
+export const obtenerHorariosDisponibles = async (idMedico, fecha) => {
+
+    const token = localStorage.getItem("token");
+
+    const response = await axios.get(`${API_URL}/disponibles`, {
+        params: { idMedico, fecha },
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+
+    return response.data;
+};
