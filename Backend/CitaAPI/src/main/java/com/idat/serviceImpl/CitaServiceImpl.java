@@ -167,7 +167,11 @@ public class CitaServiceImpl implements CitaService {
 
                 Map<String,Object> item = new HashMap<>();
                 item.put("hora", horaStr);
-                item.put("consultorio", horario.getConsultorio().getNumero());
+                item.put("consultorio",
+                	    horario.getConsultorio() != null
+                	        ? horario.getConsultorio().getNumero()
+                	        : "Sin consultorio"
+                );
 
                 resultado.add(item);
             }
