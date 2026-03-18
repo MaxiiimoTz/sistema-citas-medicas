@@ -1,14 +1,17 @@
 import { useEffect, useState } from "react";
 import { obtenerMedicos } from "../../../services/medico.api";
+import { obtenerConsultorios } from "../../../services/consultorio.api"; // 🔥 NUEVO
 import { guardarHorario } from "../../../services/horario.api";
 import { theme } from "../../../styles/theme";
 
 export default function HorariosMedico(){
 
     const [medicos,setMedicos] = useState([]);
+    const [consultorios,setConsultorios] = useState([]);
 
     const [form,setForm] = useState({
         idMedico:"",
+        idConsultorio:"",
         diasSemana:[],
         horaInicio:"",
         horaFin:"",
@@ -17,9 +20,10 @@ export default function HorariosMedico(){
 
     useEffect(()=>{
         obtenerMedicos().then(setMedicos);
+        obtenerConsultorios().then(setConsultorios); // 🔥
     },[]);
 
-    /* ===== SELECCIONAR DÍAS ===== */
+    /* ===== DÍAS ===== */
 
     const toggleDia = (dia)=>{
         if(form.diasSemana.includes(dia)){
@@ -35,20 +39,26 @@ export default function HorariosMedico(){
         }
     };
 
-    /* ===== GUARDAR MASIVO ===== */
+    /* ===== GUARDAR ===== */
 
     const guardar = async ()=>{
         try{
 
-            if(!form.idMedico || form.diasSemana.length===0){
-                alert("Completa los datos");
+            if(!form.idMedico || !form.idConsultorio || form.diasSemana.length===0){
+                alert("Completa todos los campos");
+                return;
+            }
+
+            if(form.horaInicio >= form.horaFin){
+                alert("Hora inicio debe ser menor a hora fin");
                 return;
             }
 
             for(const dia of form.diasSemana){
 
                 await guardarHorario({
-                    idMedico: form.idMedico,
+                    medico: { idMedico: form.idMedico },
+                    consultorio: { idConsultorio: form.idConsultorio }, // 🔥 CLAVE
                     diaSemana: dia,
                     horaInicio: form.horaInicio,
                     horaFin: form.horaFin,
@@ -57,10 +67,11 @@ export default function HorariosMedico(){
 
             }
 
-            alert("Horarios guardados correctamente 🚀");
+            alert("Horarios guardados 🚀");
 
             setForm({
                 idMedico:"",
+                idConsultorio:"",
                 diasSemana:[],
                 horaInicio:"",
                 horaFin:"",
@@ -77,9 +88,9 @@ export default function HorariosMedico(){
     return(
         <div style={container}>
 
-            <h2 style={title}>Gestión de Horarios Médicos</h2>
-
             <div style={card}>
+
+                <h2 style={title}>Gestión de Horarios</h2>
 
                 {/* MÉDICO */}
                 <div>
@@ -98,9 +109,26 @@ export default function HorariosMedico(){
                     </select>
                 </div>
 
+                {/* CONSULTORIO */}
+                <div>
+                    <label style={label}>Consultorio</label>
+                    <select
+                        value={form.idConsultorio}
+                        onChange={e=>setForm({...form,idConsultorio:e.target.value})}
+                        style={input}
+                    >
+                        <option value="">Seleccione consultorio</option>
+                        {consultorios.map(c=>(
+                            <option key={c.idConsultorio} value={c.idConsultorio}>
+                                {c.nombre}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+
                 {/* DÍAS */}
                 <div>
-                    <label style={label}>Días de atención</label>
+                    <label style={label}>Días</label>
 
                     <div style={diasContainer}>
                         {["Lunes","Martes","Miércoles","Jueves","Viernes","Sábado"].map(dia=>(
@@ -114,7 +142,10 @@ export default function HorariosMedico(){
                                         : "#f1f5f9",
                                     color: form.diasSemana.includes(dia)
                                         ? "#fff"
-                                        : "#374151"
+                                        : "#374151",
+                                    border: form.diasSemana.includes(dia)
+                                        ? "none"
+                                        : "1px solid #e5e7eb"
                                 }}
                             >
                                 {dia}
@@ -148,7 +179,7 @@ export default function HorariosMedico(){
 
                 {/* DURACIÓN */}
                 <div>
-                    <label style={label}>Duración cita</label>
+                    <label style={label}>Duración</label>
                     <select
                         value={form.duracionMinutos}
                         onChange={e=>setForm({...form,duracionMinutos:e.target.value})}
@@ -171,40 +202,42 @@ export default function HorariosMedico(){
     );
 }
 
-/* ===== ESTILOS PRO ===== */
+/* ===== ESTILOS ===== */
 
-const container={padding:30};
-
-const title={
-    marginBottom:20,
-    fontWeight:600
+const container={
+    display:"flex",
+    justifyContent:"center",
+    padding:30
 };
 
 const card={
+    width:420,
     background:"#fff",
     padding:25,
-    borderRadius:18,
+    borderRadius:20,
     display:"flex",
     flexDirection:"column",
     gap:18,
-    maxWidth:500,
     border:"1px solid #e5e7eb",
-    boxShadow:"0 10px 25px rgba(0,0,0,0.05)"
+    boxShadow:"0 10px 30px rgba(0,0,0,0.05)"
+};
+
+const title={
+    marginBottom:10,
+    fontWeight:600
 };
 
 const label={
     fontSize:13,
-    fontWeight:600,
-    marginBottom:5,
-    display:"block"
+    fontWeight:600
 };
 
 const input={
     width:"100%",
-    padding:"10px 12px",
-    borderRadius:10,
-    border:"1px solid #ddd",
-    marginTop:4
+    padding:"12px",
+    borderRadius:12,
+    border:"1px solid #e5e7eb",
+    marginTop:6
 };
 
 const row={
@@ -215,12 +248,13 @@ const row={
 const diasContainer={
     display:"flex",
     flexWrap:"wrap",
-    gap:10
+    gap:10,
+    marginTop:8
 };
 
 const diaBox={
-    padding:"8px 12px",
-    borderRadius:10,
+    padding:"8px 14px",
+    borderRadius:20,
     cursor:"pointer",
     fontSize:13,
     fontWeight:500,
