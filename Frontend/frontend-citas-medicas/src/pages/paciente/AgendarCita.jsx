@@ -372,8 +372,46 @@ const checkCircle={width:80,height:80,borderRadius:"50%",background:"#22c55e",co
 const successResumen={marginTop:10}
 
 const stepperWrapper={display:"flex",justifyContent:"center",marginBottom:40}
-const stepper={display:"flex",justifyContent:"space-between",width:"100%",maxWidth:600,position:"relative"}
-const line={position:"absolute",top:16,left:0,right:0,height:4,background:"#e5e7eb"}
-const lineProgress={position:"absolute",top:16,left:0,height:4,background:theme.colors.primary}
-const stepItem={display:"flex",flexDirection:"column",alignItems:"center"}
-const circle={width:32,height:32,borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center"}
+const stepper={
+    display:"flex",
+    justifyContent:"space-between",
+    alignItems:"center",
+    width:"100%",
+    maxWidth:600,
+    position:"relative"
+}
+const line={
+    position:"absolute",
+    top:"16px",
+    left:"5%",
+    right:"5%",
+    height:4,
+    background:"#e5e7eb",
+    zIndex:0
+}
+const lineProgress={
+    position:"absolute",
+    top:"16px",
+    left:"5%",
+    height:4,
+    background:theme.colors.primary,
+    zIndex:1
+}
+const stepItem={
+    flex:1,
+    display:"flex",
+    flexDirection:"column",
+    alignItems:"center",
+    position:"relative",
+    zIndex:2
+}
+const circle={
+    width:32,
+    height:32,
+    borderRadius:"50%",
+    display:"flex",
+    alignItems:"center",
+    justifyContent:"center",
+    background:"#fff",
+    fontWeight:600
+}
