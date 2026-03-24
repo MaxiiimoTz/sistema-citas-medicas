@@ -59,13 +59,22 @@ export default function Login() {
 
       const rol = data.usuario?.rol?.nombreRol;
 
-      // 🔥 redirección por rol
       switch (rol) {
+
         case "ADMIN":
+          router.replace("/admin/(tabs)/home");
+          break;
+
         case "PACIENTE":
+          router.replace("/paciente/(tabs)/home");
+          break;
+
         case "MEDICO":
+          router.replace("/medico/(tabs)/agenda");
+          break;
+
         case "OPERADOR":
-          router.replace("/(tabs)/home" as any);
+          router.replace("/operador/(tabs)/home");
           break;
 
         default:
