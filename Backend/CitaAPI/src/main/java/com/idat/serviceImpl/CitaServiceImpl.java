@@ -242,6 +242,11 @@ public class CitaServiceImpl implements CitaService {
     public Cita guardar(Cita cita) {
         return repository.save(cita);
     }
+    
+    @Override
+    public Cita obtenerPorId(Integer id) {
+        return repository.findById(id).orElse(null);
+    }
 
     @Override
     public void eliminar(Integer id) {

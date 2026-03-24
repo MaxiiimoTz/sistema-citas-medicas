@@ -78,6 +78,22 @@ public class CitaController {
     public Cita guardar(@RequestBody Cita cita) {
         return service.guardar(cita);
     }
+    
+    @PutMapping("/{id}/estado")
+    public Cita actualizarEstado(
+        @PathVariable Integer id,
+        @RequestParam String estado
+    ) {
+        Cita cita = service.obtenerPorId(id);
+
+        if (cita == null) {
+            throw new RuntimeException("CITA_NO_EXISTE");
+        }
+
+        cita.setEstado(estado);
+
+        return service.guardar(cita);
+    }
 
     @DeleteMapping("/{id}")
     public void eliminar(@PathVariable Integer id) {
